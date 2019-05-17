@@ -10,22 +10,24 @@ module.exports = function(app, options) {
   try{
     const models = app.models();
     const schema = getSchema(models, options);
-  
+
     const graphiqlPath = options.graphiqlPath || '/graphiql';
     const path = options.path || '/graphql';
-  
+
     app.use(path, bodyParser.json(), graphql.graphqlExpress(req => ({
       schema,
       context: {
         app,
-        req
+        req,
+        organizationCache: options.organizationCache,
+        findOrgIdFromDomain: options.findOrgIdFromDomain,
       }
     })));
-  
+
     app.use(graphiqlPath, graphql.graphiqlExpress({
       endpointURL: path
     }));
-  
+
     // Subscriptions
     startSubscriptionServer(app, schema, options);
   }
