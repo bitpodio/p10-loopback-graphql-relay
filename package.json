@@ -47,12 +47,14 @@
     "event-stream": "^3.3.4",
     "graphql": "^0.9.5",
     "graphql-date": "^1.0.2",
+    "graphql-playground-middleware-express": "^1.7.12",
     "graphql-redis-subscriptions": "^1.2.0",
     "graphql-relay": "^0.5.1",
     "graphql-server-express": "^0.7.2",
     "graphql-type-json": "^0.1.4",
     "lodash": "^4.16.3",
     "promisify-node": "^0.4.0",
+    "redis": "^2.8.0",
     "subscriptions-transport-ws": "0.8.1"
   },
   "devDependencies": {
