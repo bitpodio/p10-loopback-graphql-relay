@@ -12,7 +12,9 @@ module.exports = function (app, options) {
     const schema = getSchema(models, options);
     const path = options.path || '/graphql';
 
-    app.get(path, expressPlayground({ endpoint: path }))
+    // app.get(path, expressPlayground({ endpoint: path }))
+
+    app.get('/svc/playground', expressPlayground({ endpoint: path }))
 
     app.use(path, bodyParser.json(), graphql.graphqlExpress(req => ({
       schema,
