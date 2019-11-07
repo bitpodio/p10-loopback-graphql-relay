@@ -3,16 +3,16 @@
 const graphql = require('graphql-server-express');
 const bodyParser = require('body-parser');
 const { getSchema } = require('./schema/index');
-
 const startSubscriptionServer = require('./subscriptions');
+const expressPlayground = require('graphql-playground-middleware-express').default
 
-module.exports = function(app, options) {
-  try{
+module.exports = function (app, options) {
+  try {
     const models = app.models();
     const schema = getSchema(models, options);
-
-    const graphiqlPath = options.graphiqlPath || '/graphiql';
     const path = options.path || '/graphql';
+
+    app.get(path, expressPlayground({ endpoint: path, settings: {'editor.theme': 'light'}}))
 
     app.use(path, bodyParser.json(), graphql.graphqlExpress(req => ({
       schema,
@@ -24,14 +24,9 @@ module.exports = function(app, options) {
       }
     })));
 
-    app.use(graphiqlPath, graphql.graphiqlExpress({
-      endpointURL: path
-    }));
-
-    // Subscriptions
     startSubscriptionServer(app, schema, options);
   }
-  catch(err){
-    console.log('Error in starting graphql endpoint and subscription server. Error details: ',err);
+  catch (err) {
+    console.log('Error in starting graphql endpoint and subscription server. Error details: ', err);
   }
 };
