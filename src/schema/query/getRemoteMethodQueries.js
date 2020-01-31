@@ -53,15 +53,13 @@ const organizationResolveMiddleware = (...inputArgs) => {
   const xOrgId = req.headers["x-org-id"];
   const findOrgIdFromDomain = context.findOrgIdFromDomain;
   const organizationCache = context.organizationCache;
-  if (info.parentType.description === "Organization") {
-    if (args.id && args.id === "this") {
-      if (xOrgId) {
-        return organizationCache.find(xOrgId).then(orgId => setOrgIdIn('args', orgId));
-      } else if (domain) {
-        return findOrgIdFromDomain(domain).then(organizationCache.find).then(orgId => setOrgIdIn('args', orgId));
-      } else {
-        throw new Error("No x-org-id or domain (x-forwarded-host) found for resolution of Organiation id.")
-      }
+  if (info.parentType.description === "Organization" && args.id && args.id === "this") {
+    if (xOrgId) {
+      return organizationCache.find(xOrgId).then(orgId => setOrgIdIn('args', orgId));
+    } else if (domain) {
+      return findOrgIdFromDomain(domain).then(organizationCache.find).then(orgId => setOrgIdIn('args', orgId));
+    } else {
+      throw new Error("No x-org-id or domain (x-forwarded-host) found for resolution of Organiation id.")
     }
   } else {
     if (xOrgId) {
