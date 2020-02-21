@@ -26,14 +26,15 @@ const checkAccessMiddlewareFactory = (acceptingParams, model, method, isList) =>
   })
     .then(() => {
       const wrap = promisify(model[method.name]);
+      const filteredParams = _.compact(params);
       if (isList) {
         return connectionFromPromisedArray(
-          wrap.apply(model, params),
+          wrap.apply(model, filteredParams),
           args,
           model
         );
       }
-      return wrap.apply(model, params);
+      return wrap.apply(model, filteredParams);
     })
     .catch(err => {
       throw err;
