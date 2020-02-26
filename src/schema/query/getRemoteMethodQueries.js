@@ -16,7 +16,7 @@ const checkAccessMiddlewareFactory = (acceptingParams, model, method, isList) =>
   const modelId = args && args.id;
   const params = [];
   _.forEach(acceptingParams, (param, name) => {
-    params.push(args[name]);
+    params.push(name === "filter" ? ( args[name] || {}) : args[name]);
   });
   return checkAccess({
     req: context.req,
