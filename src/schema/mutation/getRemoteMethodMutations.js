@@ -123,42 +123,40 @@ module.exports = function getRemoteMethodMutations(model) {
                   throw new Error("No x-org-id or domain (x-forwarded-host) found for resolution of Organiation id.")
                 }
               }
-            } else {
-              if (xOrgId) {
-                return organizationCache.find(xOrgId)
-                  .then(orgId => setOrgIdIn('req', orgId))
-                  .then(() => checkAccessAndCallMethod({
-                    req: context.req,
-                    model: model,
-                    method: method,
-                    id: modelId,
-                    typeObj: typeObj,
-                    params: params,
-                  }));
-              } else if (domain) {
-                return findOrgIdFromDomain(domain)
-                  .then(organizationCache.find)
-                  .then(orgId => setOrgIdIn('req', orgId))
-                  .then(() => checkAccessAndCallMethod({
-                    req: context.req,
-                    model: model,
-                    method: method,
-                    id: modelId,
-                    typeObj: typeObj,
-                    params: params,
-                  }));
-              } else {
-                throw new Error("No x-org-id or domain (x-forwarded-host) found for resolution of Organiation id.")
-              }
             }
+            if (xOrgId) {
+              return organizationCache.find(xOrgId)
+                .then(orgId => setOrgIdIn('req', orgId))
+                .then(() => checkAccessAndCallMethod({
+                  req: context.req,
+                  model: model,
+                  method: method,
+                  id: modelId,
+                  typeObj: typeObj,
+                  params: params,
+                }));
+            } else if (domain) {
+              return findOrgIdFromDomain(domain)
+                .then(organizationCache.find)
+                .then(orgId => setOrgIdIn('req', orgId))
+                .then(() => checkAccessAndCallMethod({
+                  req: context.req,
+                  model: model,
+                  method: method,
+                  id: modelId,
+                  typeObj: typeObj,
+                  params: params,
+                }));
+            }
+
             function setOrgIdIn(argsOrReq, orgId) {
               if (orgId) {
                 if (argsOrReq === "args") {
                   args.id = orgId;
                 } else if (argsOrReq === "req") {
                   args.options.orgId = parseInt(orgId);
-                  req.orgId = parseInt(orgId);
                 }
+                req.orgId = parseInt(orgId);
               } else {
                 const errorMsg = xOrgId ? "x-org-id " + xOrgId : "domain (x-forwarded-host) " + domain;
                 throw new Error("Unable to resolve Organization id with value of " + errorMsg);
